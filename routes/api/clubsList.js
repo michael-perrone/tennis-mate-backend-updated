@@ -121,7 +121,6 @@ router.post("/clubSearch", authUser, async (req, res) => {
           tennisClub: tennisClubsByState[i]._id
         });
         if (clubProfileFound) {
-          console.log("hello");
           clubAndProfileState.push({
             club: tennisClubsByState[i],
             profile: clubProfileFound

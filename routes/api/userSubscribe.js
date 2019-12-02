@@ -5,7 +5,6 @@ const User = require("../../models/User");
 
 router.post("/", async (req, res) => {
   try {
-    console.log(req.body.tennisClubId);
     let subscriberExists = await TennisClub.find({
       followers: req.body.userId
     });
@@ -15,10 +14,6 @@ router.post("/", async (req, res) => {
         subscriberExists.length > 0 &&
         subscriberExists[i]._id == req.body.tennisClubId
       ) {
-        console.log(
-          typeof subscriberExists[i]._id,
-          typeof req.body.tennisClubId
-        );
         doesExist = true;
       }
     }
@@ -49,7 +44,6 @@ router.post("/", async (req, res) => {
 router.post("/unfollow", async (req, res) => {
   try {
     let user = await User.findOne({ _id: req.body.userId });
-    console.log(user);
     let newClubsFollowing = user.clubsFollowing.filter(
       clubId => clubId != req.body.tennisClubId
     );

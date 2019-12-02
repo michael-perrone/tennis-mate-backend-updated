@@ -19,7 +19,6 @@ router.post("/", async (req, res) => {
         .json({ errors: [{ msg: "That email is already being used" }] });
     }
   } catch (error) {
-    console.log(error.message);
     res.status(500).send("Server Error");
   }
 
@@ -40,7 +39,6 @@ router.post("/", async (req, res) => {
       age: req.body.age,
       gender: req.body.gender
     });
-    console.log(newUser);
 
     const salt = await bcrypt.genSalt(10);
 
@@ -63,12 +61,10 @@ router.post("/", async (req, res) => {
         if (error) {
           throw error;
         } else {
-          console.log(config.get("userSecret"));
           res.status(200).json({ token });
         }
       }
     );
-    console.log(payload);
   }
 });
 

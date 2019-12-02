@@ -126,7 +126,6 @@ router.get("/", async (req, res) => {
     );
     res.json(instructorProfiles);
   } catch (error) {
-    console.log(error.message);
     res.status(500).send("server error");
   }
 });
@@ -189,7 +188,6 @@ router.put("/experience", instructorAuth, async (req, res) => {
 
       res.json(profile);
     } catch (error) {
-      console.log(error.message);
       res.status(500).send("server error");
     }
   }

@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
       "clubAccepted",
       "bookings"
     ]);
-    console.log(instructorProfile);
+
     if (instructorProfile) {
       return res.status(200).json({ instructorProfile, profileCreated: true });
     }

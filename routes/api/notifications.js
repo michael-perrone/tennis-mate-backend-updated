@@ -8,7 +8,6 @@ const ClubProfile = require("../../models/ClubProfile");
 router.get("/instructornotifications", instructorAuth, async (req, res) => {
   try {
     let instructor = await Instructor.findOne({ _id: req.instructor.id });
-    console.log(instructor);
     let notificationArray = [];
     for (let i = 0; i < instructor.notifications.length; i++) {
       let notification = await Notification.findOne({
@@ -53,7 +52,6 @@ router.post("/instructorclickedyes", async (req, res) => {
       tennisClub: notification.notificationFromTennisClub
     }).populate("tennisClub", ["clubName"]);
     instructor.tennisClub = tennisClubProfile.tennisClub.clubName;
-    console.log(instructor.tennisClub);
     instructor.clubAccepted = true;
     instructor.tennisClubTeachingAt = notification.notificationFromTennisClub;
     await instructor.save();
@@ -117,7 +115,6 @@ router.post("/instructorclickedyes", async (req, res) => {
       return instructorAlreadyInList;
     }
 
-    console.log(checkIfInstructorAlreadyInvited());
 
     if (checkIfInstructorAlreadyInvited() === "No Error") {
       const notification = new Notification({

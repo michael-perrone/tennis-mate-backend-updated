@@ -6,7 +6,6 @@ const TennisClub = require("../../models/TennisClub");
 
 router.get("/", userAuth, async (req, res) => {
   const tennisClubs = await TennisClub.find({ followers: req.user.id });
-  console.log(tennisClubs);
   if (tennisClubs.length) {
     return res.status(200).json({ tennisClubs });
   } else {
@@ -15,7 +14,7 @@ router.get("/", userAuth, async (req, res) => {
       .json({ message: "You have not subscribed to any clubs yet." });
   }
   /*  if (user && tennisClubs) {
-    console.log("hi");
+
     return res.status(200).json({ tennisClubs });
   } */
 });
