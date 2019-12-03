@@ -41,6 +41,7 @@ app.use("/api/userSubscribe", require("./routes/api/userSubscribe"));
 
 app.use("/api/userClubs", require("./routes/api/userClubs"));
 app.use("/api/getCustomers", require("./routes/api/getCustomers"));
+app.use("/api/getPlayers", require("./routes/api/getPlayers"));
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {

@@ -20,7 +20,10 @@ router.post("/", async (req, res) => {
     await newCourtBooked.save();
 
     if (newCourtBooked) {
-      const bookings = await CourtBooked.find({ clubName: req.body.clubName });
+      const bookings = await CourtBooked.find({
+        clubName: req.body.booking.clubName,
+        date: req.body.date
+      });
       res.status(200).json({ newBooking: newCourtBooked, bookings });
     }
   } catch (error) {
@@ -30,10 +33,26 @@ router.post("/", async (req, res) => {
 
 router.post("/getcourts", async (req, res) => {
   try {
-    const bookings = await CourtBooked.find({ clubName: req.body.clubName });
+    const bookings = await CourtBooked.find({
+      clubName: req.body.clubName,
+      date: req.body.date
+    });
     if (bookings.length > 0) {
       res.status(200).json({ bookings });
     }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post("/delete", async (req, res) => {
+  try {
+    await CourtBooked.findOneAndDelete({ _id: req.body.bookingId });
+    let bookings = await CourtBooked.find({
+      clubName: req.body.clubName,
+      date: req.body.date
+    });
+    res.status(200).json({ bookings });
   } catch (error) {
     console.log(error);
   }
