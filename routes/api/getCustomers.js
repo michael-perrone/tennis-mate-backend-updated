@@ -4,6 +4,7 @@ const TennisClub = require("../../models/TennisClub");
 const User = require("../../models/User");
 
 router.post("/", async (req, res) => {
+  console.log(req.body.clubNameAllLower);
   const tennisClub = await TennisClub.findOne({
     clubNameAllLower: req.body.clubNameAllLower
   });
