@@ -2,16 +2,14 @@ const express = require("express");
 const router = express.Router();
 const TennisClub = require("../../models/TennisClub");
 const User = require("../../models/User");
+const CourtBooked = require("../../models/CourtBooked");
 
 router.post("/", async (req, res) => {
-  console.log(req.body.clubNameAllLower);
   const tennisClub = await TennisClub.findOne({
     clubNameAllLower: req.body.clubNameAllLower
   });
   let users = await User.find({ _id: tennisClub.followers });
-
   const namesMatching = [];
-
   for (let i = 0; i < users.length; i++) {
     if (
       users[i].fullName
@@ -26,6 +24,57 @@ router.post("/", async (req, res) => {
   } else {
     res.status(400).json({ error: "No one found" });
   }
+});
+
+router.post("/saveNewPlayers", async (req, res) => {
+  const booking = await CourtBooked.findOne({ _id: req.body.bookingId });
+  let oldPlayers = booking.players;
+  booking.players = req.body.newPlayers;
+  await booking.save();
+  let newPlayers = booking.players;
+
+  console.log(oldPlayers);
+  console.log(newPlayers);
+  let samePlayers = [];
+  let deletedPlayers = [];
+  let playersAdded = [];
+  for (let x = 0; x < oldPlayers.length; x++) {
+    if (newPlayers.includes(oldPlayers[x])) {
+      samePlayers.push(oldPlayers[x]);
+    } else {
+      deletedPlayers.push(oldPlayers[x]);
+    }
+  }
+  for (let w = 0; w < newPlayers.length; w++) {
+    if (oldPlayers.includes(newPlayers[w])) {
+      samePlayers.push(newPlayers[w]);
+    } else {
+      playersAdded.push(newPlayers[w]);
+    }
+  }
+
+  console.log(samePlayers);
+  console.log(playersAdded);
+
+  const players = User.find({ _id: deletedPlayers });
+  for (let i = 0; i < players.length; i++) {
+    let newBookings = players[i].bookings.filter(
+      eachBooking => eachBooking.id != booking.id
+    );
+    players[i].bookings = newBookings;
+    players[i].save();
+    console.log(players[i]);
+  }
+  const newPlayersToAdd = User.find({ _id: playersAdded });
+  for (let t = 0; t < newPlayersToAdd.length; t++) {
+    let playersBookings = [...newPlayersToAdd[t].bookings, booking.id];
+    console.log(booking.id);
+    newPlayersToAdd[t].bookings = playersBookings;
+    newPlayersToAdd[t].save();
+    console.log(newPlayersToAdd[t]);
+  }
+
+  res.status(200).json({ booking });
 });
 
 module.exports = router;

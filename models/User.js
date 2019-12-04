@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
+  bookings: {
+    type: [mongoose.Schema.Types.ObjectId]
+  },
   firstName: {
     type: String,
     required: true

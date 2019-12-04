@@ -48,16 +48,16 @@ router.post("/unfollow", async (req, res) => {
       clubId => clubId != req.body.tennisClubId
     );
     let tennisClub = await TennisClub.findOne({ _id: req.body.tennisClubId });
-    let newTennisClubFollowers = tennisClub.subscribers.filter(
+    let newTennisClubFollowers = tennisClub.followers.filter(
       userId => userId != req.body.userId
     );
     if (user && tennisClub) {
       user.clubsFollowing = newClubsFollowing;
       await user.save();
-      tennisClub.subscribers = newTennisClubFollowers;
+      tennisClub.followers = newTennisClubFollowers;
       await tennisClub.save();
       let tennisClubsAfterFilter = await TennisClub.find({
-        subscribers: user._id
+        followers: user._id
       });
       return res.status(200).json({ tennisClubsAfterFilter });
     }

@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const CourtBooked = require("../../models/CourtBooked");
+const Instructor = require("../../models/Instructor");
+const User = require("../../models/User");
 
 router.post("/", async (req, res) => {
   try {
@@ -17,6 +19,15 @@ router.post("/", async (req, res) => {
       date: req.body.booking.date,
       players: req.body.players
     });
+    if (req.body.players.length > 0) {
+      const players = await User.find({ _id: newCourtBooked.players });
+      for (let i = 0; i < players.length; i++) {
+        let previousPlayersBookings = [...players[i].bookings];
+        previousPlayersBookings.push(newCourtBooked._id);
+        players[i].bookings = previousPlayersBookings;
+        players[i].save();
+      }
+    }
     await newCourtBooked.save();
 
     if (newCourtBooked) {
@@ -47,6 +58,29 @@ router.post("/getcourts", async (req, res) => {
 
 router.post("/delete", async (req, res) => {
   try {
+    let booking = await CourtBooked.findOne({ _id: req.body.bookingId });
+    if (booking) {
+      let instructor = await Instructor.findOne({
+        _id: CourtBooked.instructorBooked
+      });
+      if (instructor) {
+        let newInstructorBookings = instructor.bookings.filter(
+          eachBooking => eachBooking._id !== booking.id
+        );
+        instructor.bookings = newInstructorBookings;
+        instructor.save();
+      }
+      let players = await User.find({ _id: booking.players });
+      if (players.length) {
+        for (let i = 0; i < players.length; i++) {
+          let newPlayerBookings = players[i].bookings.filter(
+            eachBooking => eachBooking._id !== booking.id
+          );
+          players[i].bookings = newPlayerBookings;
+          players[i].save();
+        }
+      }
+    }
     await CourtBooked.findOneAndDelete({ _id: req.body.bookingId });
     let bookings = await CourtBooked.find({
       clubName: req.body.clubName,

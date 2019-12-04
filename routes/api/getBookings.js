@@ -3,15 +3,11 @@ const router = express.Router();
 const instructorAuth = require("../../middleware/authInstructor");
 const Instructor = require("../../models/Instructor");
 const CourtBooked = require("../../models/CourtBooked");
+const userAuth = require("../../middleware/authUser");
 
-router.get("/", async (req, res) => {
+router.get("/", userAuth, async (req, res) => {
   try {
-    //   let instructor = await Instructor.findOne({ _id: req.instructor.id });
-    // let bookings = await CourtBooked.find({ _id: instructor.bookings });
-    // if (bookings.length > 0) {
-    if (1 > 0) {
-      res.status(200).json({ hi: "bookings" });
-    }
+    let bookings = await CourtBooked.find({ players: req.user.id });
   } catch (error) {
     console.log(error);
   }
