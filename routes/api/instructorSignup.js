@@ -71,15 +71,18 @@ router.post(
             req.body.createPassword,
             salt
           );
+          console.log(newInstructor);
           await newInstructor.save();
+          console.log("hi");
           const payload = {
             instructor: {
-              fullName: instructor.fullName,
+              fullName: newInstructor.fullName,
               id: newInstructor.id,
               instructor: true,
               instructorName: `${newInstructor.firstName} ${newInstructor.lastName}`
             }
           };
+
           jwt.sign(
             payload,
             config.get("instructorSecret"),
@@ -93,6 +96,7 @@ router.post(
             }
           );
         } catch (error) {
+          console.log(error);
           res.status(500).send("Server Error");
         }
       }

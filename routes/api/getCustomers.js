@@ -33,8 +33,6 @@ router.post("/saveNewPlayers", async (req, res) => {
   await booking.save();
   let newPlayers = booking.players;
 
-  console.log(oldPlayers);
-  console.log(newPlayers);
   let samePlayers = [];
   let deletedPlayers = [];
   let playersAdded = [];
@@ -53,25 +51,21 @@ router.post("/saveNewPlayers", async (req, res) => {
     }
   }
 
-  console.log(samePlayers);
-  console.log(playersAdded);
-
-  const players = User.find({ _id: deletedPlayers });
+  const players = await User.find({ _id: deletedPlayers });
   for (let i = 0; i < players.length; i++) {
-    let newBookings = players[i].bookings.filter(
-      eachBooking => eachBooking.id != booking.id
-    );
+    console.log(players[i].bookings);
+    let newBookings = players[i].bookings.filter(eachBooking => {
+      return eachBooking != booking.id;
+    });
+    console.log(newBookings);
     players[i].bookings = newBookings;
-    players[i].save();
-    console.log(players[i]);
+    await players[i].save();
   }
-  const newPlayersToAdd = User.find({ _id: playersAdded });
+  const newPlayersToAdd = await User.find({ _id: playersAdded });
   for (let t = 0; t < newPlayersToAdd.length; t++) {
     let playersBookings = [...newPlayersToAdd[t].bookings, booking.id];
-    console.log(booking.id);
     newPlayersToAdd[t].bookings = playersBookings;
-    newPlayersToAdd[t].save();
-    console.log(newPlayersToAdd[t]);
+    await newPlayersToAdd[t].save();
   }
 
   res.status(200).json({ booking });
