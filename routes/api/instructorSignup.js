@@ -71,9 +71,9 @@ router.post(
             req.body.createPassword,
             salt
           );
-          console.log(newInstructor);
+
           await newInstructor.save();
-          console.log("hi");
+
           const payload = {
             instructor: {
               fullName: newInstructor.fullName,

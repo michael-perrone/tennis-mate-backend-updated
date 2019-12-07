@@ -53,11 +53,9 @@ router.post("/saveNewPlayers", async (req, res) => {
 
   const players = await User.find({ _id: deletedPlayers });
   for (let i = 0; i < players.length; i++) {
-    console.log(players[i].bookings);
     let newBookings = players[i].bookings.filter(eachBooking => {
       return eachBooking != booking.id;
     });
-    console.log(newBookings);
     players[i].bookings = newBookings;
     await players[i].save();
   }

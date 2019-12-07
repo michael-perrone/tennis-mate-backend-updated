@@ -11,6 +11,7 @@ app.use(express.json({ extended: false }));
 app.get("/", (req, res) => {
   res.send("hi");
 });
+
 app.use("/api/getInstructor", require("./routes/api/getInstructor"));
 app.use("/api/getBookings", require("./routes/api/getBookings"));
 app.use("/api/notifications", require("./routes/api/notifications"));
@@ -43,6 +44,9 @@ app.use("/api/userClubs", require("./routes/api/userClubs"));
 app.use("/api/getCustomers", require("./routes/api/getCustomers"));
 app.use("/api/getPlayers", require("./routes/api/getPlayers"));
 app.use("/api/rebooking", require("./routes/api/rebooking.js"));
+app.use("/api/rebooked", require("./routes/api/rebooked"));
+app.use("/api/iBookings", require("./routes/api/iBookings"));
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
