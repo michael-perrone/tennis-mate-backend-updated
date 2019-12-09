@@ -48,9 +48,7 @@ router.post("/getcourts", async (req, res) => {
       clubName: req.body.clubName,
       date: req.body.date
     });
-    if (bookings.length > 0) {
-      res.status(200).json({ bookings });
-    }
+    res.status(200).json({ bookings });
   } catch (error) {
     console.log(error);
   }
