@@ -4,6 +4,29 @@ const instructorAuth = require("../../middleware/authInstructor");
 const Instructor = require("../../models/Instructor");
 const Notification = require("../../models/Notification");
 const ClubProfile = require("../../models/ClubProfile");
+const CourtBooked = require("../../models/CourtBooked");
+
+router.post("/userBookedInstructor", async (req, res) => {
+  try {
+    let booking = await CourtBooked.findOne({ _id: req.body.bookingId });
+    let instructor = await Instructor.findOne({ _id: req.body.instructorId });
+    let bookingDateArray = booking.date.split(" ");
+    let bookingDate = bookingDateArray.join("-");
+    let notificationCreate = new Notification({
+      instructorId: req.body.instructorId,
+      userId: req.body.userId,
+      notificationType: "instructorBookedUser",
+      notificationMessage: `You have been booked for a ${booking.bookingType} by ${booking.bookedBy} from ${booking.timeStart}-${booking.timeEnd} on ${bookingDate}. If you cannot make this booking, please remove it from the schedule.`
+    });
+    notificationCreate.save();
+    instructor.notifications.unshift(notificationCreate._id);
+    instructor.save();
+    res.status(200).send();
+    console.log(booking);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 router.get("/instructornotifications", instructorAuth, async (req, res) => {
   try {

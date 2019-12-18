@@ -290,6 +290,9 @@ router.post("/addInstructorsToClub", async (req, res) => {
       }
     } else {
       if (req.body.instructors.length > 0) {
+        let tennisClub = await TennisClub.findOne({
+          _id: req.body.tennisClub
+        });
         let clubProfile = new ClubProfile({
           instructorsToSendInvite: req.body.instructors,
           tennisClub: req.body.tennisClub
@@ -301,6 +304,16 @@ router.post("/addInstructorsToClub", async (req, res) => {
             _id: req.body.instructors[f]
           });
           instructorsForInstantAdd.push(instructorForInstant);
+          let newNotification = new Notification({
+            instructorId: instructorForInstant._id,
+            notificationType: "Club Added Instructor",
+            notificationDate: new Date(),
+            notificationFromTennisClub: tennisClub._id,
+            notificationMessage: `You have been added as an instructor by ${tennisClub.clubName}. If you work here, accept this request and you will now be a registered employee of this Tennis Club.`
+          });
+          instructorForInstant.notifications.unshift(newNotification);
+          await newNotification.save();
+          await instructorForInstant.save();
         }
         res.status(200).json({
           clubProfile,

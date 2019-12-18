@@ -59,6 +59,7 @@ router.post(
           let newInstructor = new Instructor({
             firstName: realFirstName,
             lastName: realLastName,
+            fullName: realFirstName + " " + realLastName,
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
             password: req.body.createPassword,

@@ -29,6 +29,10 @@ app.use("/api/instructorList", require("./routes/api/instructorList"));
 app.use("/api/getInstructors", require("./routes/api/getInstructors"));
 app.use("/api/saveLocation", require("./routes/api/saveLocation"));
 app.use(
+  "/api/checkInstructorAvailability",
+  require("./routes/api/checkInstructorAvailability")
+);
+app.use(
   "/api/getUserLocationInfo",
   require("./routes/api/getUserLocationInfo")
 );

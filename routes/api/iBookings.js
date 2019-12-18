@@ -7,6 +7,7 @@ router.post("/", async (req, res) => {
   let allBookings = await CourtBooked.find({
     instructorBooked: req.body.instructorId
   });
+  console.log(allBookings);
 
   let bookingsToSendBack = [];
 
@@ -15,7 +16,6 @@ router.post("/", async (req, res) => {
       let playersGrabbed = allBookings[i].players;
       for (let x = 0; x < playersGrabbed.length; x++) {
         if (req.body.userId == playersGrabbed[x]) {
-          console.log("DWDAWDWD");
           bookingsToSendBack.push(allBookings[i]);
         }
       }
