@@ -48,6 +48,10 @@ const UserSchema = new mongoose.Schema({
   clubsFollowing: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "tennisClub"
+  },
+  notifications: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "notification"
   }
 });
 

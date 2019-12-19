@@ -14,12 +14,10 @@ router.post("/", async (req, res) => {
     let length = instructorBookings[i].courtIds.length;
     let courtIds = instructorBookings[i].courtIds;
     for (let e = 0; e < length; e++) {
-      console.log(length);
       let courtId1Array = courtIds[e].split("");
       courtId1Array.shift();
       let realCourtId1 = courtId1Array.join("");
       for (let m = 0; m < req.body.courtIds.length; m++) {
-        console.log(realCourtId1);
         if (realCourtId1 === req.body.courtIds[m]) {
           return res.status(200).json({ bookingNotOkay: true });
         }

@@ -223,6 +223,7 @@ router.post("/addInstructorsToClub", async (req, res) => {
       tennisClub: req.body.tennisClub
     });
     if (tennisClubProfile) {
+      console.log("WEEEEEEEEEEEEEEEEEE");
       function checkIfDuplicates() {
         let sendError = "No Error";
         for (let x = 0; x < req.body.instructors.length; x++) {
@@ -238,18 +239,20 @@ router.post("/addInstructorsToClub", async (req, res) => {
               sendError = "You can not add the same instructor twice.";
               return sendError;
             }
-            for (
-              let z = 0;
-              z < tennisClubProfile.instructorsWhoAccepted.length;
-              z++
+          }
+
+          for (
+            let z = 0;
+            z < tennisClubProfile.instructorsWhoAccepted.length;
+            z++
+          ) {
+            if (
+              req.body.instructors[x] ==
+              tennisClubProfile.instructorsWhoAccepted[z]
             ) {
-              if (
-                req.body.instructors[x] ==
-                tennisClubProfile.instructorsWhoAccepted[z]
-              ) {
-                sendError =
-                  "One of these instructors is already registered at your club.";
-              }
+              sendError =
+                "One of these instructors is already registered at your club.";
+              return sendError;
             }
           }
         }

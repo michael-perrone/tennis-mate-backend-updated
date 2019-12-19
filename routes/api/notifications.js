@@ -1,10 +1,13 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const instructorAuth = require("../../middleware/authInstructor");
 const Instructor = require("../../models/Instructor");
 const Notification = require("../../models/Notification");
 const ClubProfile = require("../../models/ClubProfile");
 const CourtBooked = require("../../models/CourtBooked");
+const User = require("../../models/User");
+const userAuth = require("../../middleware/authUser");
 
 router.post("/userBookedInstructor", async (req, res) => {
   try {
@@ -13,16 +16,55 @@ router.post("/userBookedInstructor", async (req, res) => {
     let bookingDateArray = booking.date.split(" ");
     let bookingDate = bookingDateArray.join("-");
     let notificationCreate = new Notification({
+      notificationDate: new Date(),
       instructorId: req.body.instructorId,
       userId: req.body.userId,
       notificationType: "instructorBookedUser",
-      notificationMessage: `You have been booked for a ${booking.bookingType} by ${booking.bookedBy} from ${booking.timeStart}-${booking.timeEnd} on ${bookingDate}. If you cannot make this booking, please remove it from the schedule.`
+      notificationMessage: `You have been booked for a ${booking.bookingType} by ${booking.bookedBy} from ${booking.timeStart}-${booking.timeEnd} on ${bookingDate}. You can view this booking in your club's schedule.`
     });
     notificationCreate.save();
     instructor.notifications.unshift(notificationCreate._id);
     instructor.save();
     res.status(200).send();
-    console.log(booking);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post("/instructorBookedUser", async (req, res) => {
+  try {
+    let instructor = await Instructor.findOne({ _id: req.body.instructorId });
+    let booking = await CourtBooked.findOne({ _id: req.body.bookingId });
+    let players = await User.find({ _id: req.body.users });
+    let newNotification = new Notification({
+      notificationType: "InstructorBookedUser",
+      notificationMessage: `You have been added to a ${booking.bookingType} from ${booking.timeStart}-${booking.timeEnd} at ${booking.clubName} by ${instructor.fullName}.`,
+      notificationDate: new Date()
+    });
+
+    for (let i = 0; i < players.length; i++) {
+      let playerNotifications = players[i].notifications;
+      playerNotifications.unshift(newNotification);
+      players[i].notifications = playerNotifications;
+      await players[i].save();
+    }
+    await newNotification.save();
+
+    res.status(204).send();
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get("/user", userAuth, async (req, res) => {
+  try {
+    let user = await User.findOne({ _id: req.user.id });
+    console.log(user.notifications);
+    let notifications = await Notification.find({ _id: user.notifications });
+    console.log(notifications);
+    if (user) {
+      res.status(200).json({ userNotifications: notifications });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -96,6 +138,9 @@ router.post("/instructorclickedyes", async (req, res) => {
     await notification.save();
     let notifications = await Notification.find({
       _id: instructor.notifications
+    });
+    notifications.sort(function(a, b) {
+      return b.notificationDate - a.notificationDate;
     });
     res.status(200).json({ newNotifications: notifications });
   } catch (error) {

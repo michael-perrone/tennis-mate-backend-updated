@@ -12,6 +12,8 @@ router.get("/", userAuth, async (req, res) => {
     let bookings = await CourtBooked.find({ _id: user.bookings });
     if (bookings.length) {
       res.status(200).json({ bookings: bookings });
+    } else {
+      res.status(204).send();
     }
   } catch (error) {
     console.log(error);

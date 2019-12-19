@@ -7,7 +7,6 @@ router.post("/", async (req, res) => {
   let allBookings = await CourtBooked.find({
     instructorBooked: req.body.instructorId
   });
-  console.log(allBookings);
 
   let bookingsToSendBack = [];
 
@@ -26,8 +25,6 @@ router.post("/", async (req, res) => {
   } else {
     res.status(204).send();
   }
-
-  console.log(bookingsToSendBack);
 });
 
 router.get("/instructor", instructorAuth, async (req, res) => {
@@ -38,12 +35,10 @@ router.get("/instructor", instructorAuth, async (req, res) => {
 
   let dateFormatted = `${month.toString()} ${day.toString()} ${year.toString()}`;
 
-  console.log(todaysDate);
   let instructorsBookings = await CourtBooked.find({
     instructorBooked: req.instructor.id,
     date: dateFormatted
   });
-  console.log(instructorsBookings);
 
   res.status(200).json({ instructorsBookings });
 });
@@ -66,12 +61,10 @@ router.post("/schedule", async (req, res) => {
 
   let dateToUse = [month, day, year].join(" ");
 
-  console.log(dateToUse, req.body.instructorId);
   let bookings = await CourtBooked.find({
     instructorBooked: req.body.instructorId,
     date: dateToUse
   });
-  console.log(bookings);
 
   res.status(200).json({ bookings });
 });
